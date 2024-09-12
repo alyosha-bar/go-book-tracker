@@ -9,6 +9,10 @@ import (
 	"gorm.io/gorm"
 )
 
+// NEXT
+// Make User Authentication & Authorisation (JWT)
+// Research Deployment on AWS
+
 type Book struct {
 	id     string `json:"id"`
 	Title  string `json:"title"`
@@ -24,6 +28,8 @@ type Req struct {
 
 // all books --> FROM DATABASE!!
 func getBooks(c *gin.Context) {
+
+	// SINCE I HAVE READ AND UNREAD I CAN USE GO ROUTINES TO FETCH BOTH AND RETURN THEM SEPARATELY TO HELP WITH FRONTEND
 
 	db := connectToDB()
 
