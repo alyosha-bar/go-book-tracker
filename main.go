@@ -3,6 +3,7 @@ package main
 import (
 	"books-backend/controllers"
 	"books-backend/initialisers"
+	"books-backend/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,6 +18,7 @@ import (
 func init() {
 	initialisers.ConnectToDB()
 	initialisers.SyncDatabase()
+	initialisers.LoadEnvVariables()
 }
 
 // MAIN
@@ -36,7 +38,8 @@ func main() {
 
 	// Auth
 	router.POST("/signup", controllers.SignUp)
-	router.GET("/login", controllers.Login)
+	router.POST("/login", controllers.Login)
+	router.GET("/validate", middleware.RequireAuth, controllers.Validate)
 
 	router.Run(":8000")
 }
