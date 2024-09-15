@@ -10,10 +10,10 @@ import (
 )
 
 type Book struct {
-	id     string `json:"id"`
-	Title  string `json:"title"`
-	Author string `json:"author"`
-	Read   int    `json:read`
+	Book_id int
+	Title   string `json:"title"`
+	Author  string `json:"author"`
+	Read    int    `json:read`
 }
 
 type Req struct {
@@ -22,20 +22,48 @@ type Req struct {
 
 // GET functions
 
-// all books --> FROM DATABASE!!
+// all books BY USER
 func GetBooks(c *gin.Context) {
 
 	// SINCE I HAVE READ AND UNREAD I CAN USE GO ROUTINES TO FETCH BOTH AND RETURN THEM SEPARATELY TO HELP WITH FRONTEND
 
 	db := initialisers.ConnectToDB()
 
-	var books []Book
-	fmt.Println("Fetching first book...")
-	var result = db.Find(&books)
+	var body struct {
+		User_id int
+	}
+
+	c.BindJSON(&body)
+
+	// save into this array
+	type BookUserStatus struct {
+		Title  string `json:"title"`
+		Author string `json:"author"`
+		Status int    `json:"status"`
+	}
+
+	var books []BookUserStatus
+
+	db = db.Debug()
+
+	// result := db.Table("books").
+	// 	Select("books.title, books.author, user_books.status").
+	// 	Joins("INNER JOIN user_books ON user_books.book_id = books.book_id").
+	// 	Where("user_books.user_id = ?", body.User_id).
+	// 	Find(&books) // Correctly scan into the books slice
+
+	result := db.Raw(`
+    SELECT books.title, books.author, user_books.status
+    FROM books
+    INNER JOIN user_books ON user_books.book_id = books.book_id
+    WHERE user_books.user_id = ?`, body.User_id).
+		Scan(&books) // Use Scan for multiple records
+
 	if result.Error != nil {
 		panic("Failed to fetch data: " + result.Error.Error())
 	}
-	fmt.Println("Fetched book:", books)
+
+	fmt.Println(books)
 
 	c.JSON(http.StatusOK, books)
 }
@@ -81,15 +109,42 @@ func CreateBook(c *gin.Context) {
 
 	db := initialisers.ConnectToDB()
 
-	var newBook Book
+	var body struct {
+		User_id int
+		Book_id int
+		Title   string
+		Author  string
+	}
 
-	if err := c.BindJSON(&newBook); err != nil {
+	type UserBook struct {
+		User_id int
+		Book_id int
+		Status  int
+	}
+
+	if err := c.BindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	fmt.Println("Inserting data...")
+	fmt.Println()
+
+	var newBook = Book{Book_id: body.Book_id, Title: body.Title, Author: body.Author}
+
+	var newUserBook = UserBook{User_id: body.User_id, Book_id: body.Book_id, Status: 0}
+
+	fmt.Println(newBook)
+	fmt.Println(newUserBook)
+
+	fmt.Println("Inserting Book...")
 	result := db.Create(newBook)
+	if result.Error != nil {
+		panic("Failed to insert data: " + result.Error.Error())
+	}
+	fmt.Println("Data inserted")
+
+	fmt.Println("Inserting User Book Relation...")
+	result = db.Create(newUserBook)
 	if result.Error != nil {
 		panic("Failed to insert data: " + result.Error.Error())
 	}

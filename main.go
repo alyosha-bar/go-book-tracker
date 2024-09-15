@@ -16,13 +16,14 @@ import (
 // Better folder Structure --> MVC
 
 func init() {
-	initialisers.ConnectToDB()
 	initialisers.SyncDatabase()
+	initialisers.ConnectToDB()
 	initialisers.LoadEnvVariables()
 }
 
 // MAIN
 func main() {
+	initialisers.SyncDatabase()
 	router := gin.Default()
 
 	router.SetTrustedProxies([]string{"109.81.95.132"})
