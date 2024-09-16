@@ -24,9 +24,6 @@ type Req struct {
 
 // all books BY USER
 func GetBooks(c *gin.Context) {
-
-	// SINCE I HAVE READ AND UNREAD I CAN USE GO ROUTINES TO FETCH BOTH AND RETURN THEM SEPARATELY TO HELP WITH FRONTEND
-
 	db := initialisers.ConnectToDB()
 
 	var body struct {
@@ -44,20 +41,14 @@ func GetBooks(c *gin.Context) {
 
 	var books []BookUserStatus
 
-	db = db.Debug()
-
-	// result := db.Table("books").
-	// 	Select("books.title, books.author, user_books.status").
-	// 	Joins("INNER JOIN user_books ON user_books.book_id = books.book_id").
-	// 	Where("user_books.user_id = ?", body.User_id).
-	// 	Find(&books) // Correctly scan into the books slice
+	// db = db.Debug()
 
 	result := db.Raw(`
     SELECT books.title, books.author, user_books.status
     FROM books
     INNER JOIN user_books ON user_books.book_id = books.book_id
     WHERE user_books.user_id = ?`, body.User_id).
-		Scan(&books) // Use Scan for multiple records
+		Find(&books) // Use Scan for multiple records
 
 	if result.Error != nil {
 		panic("Failed to fetch data: " + result.Error.Error())
@@ -68,7 +59,7 @@ func GetBooks(c *gin.Context) {
 	c.JSON(http.StatusOK, books)
 }
 
-// get books by ID --> FROM DATABASE!!
+// get books by ID --> FROM DATABASE!! --> AND BY ID
 func GetBookByID(c *gin.Context) {
 
 	db := initialisers.ConnectToDB()
@@ -86,7 +77,7 @@ func GetBookByID(c *gin.Context) {
 	c.JSON(http.StatusOK, book)
 }
 
-// get books by author
+// get books by author --> AND BY ID
 func GetBooksByAuthor(c *gin.Context) {
 
 	db := initialisers.ConnectToDB()
@@ -155,6 +146,7 @@ func CreateBook(c *gin.Context) {
 }
 
 // PUT --> UPDATE STATEMENT --> TO DATABASE!!
+// REVIEW ENTIRE FUNCTION --> non priority
 func UpdateBook(c *gin.Context) {
 
 	db := initialisers.ConnectToDB()
@@ -180,6 +172,7 @@ func UpdateBook(c *gin.Context) {
 
 }
 
+// needs changing with new STATUS system
 func MarkRead(c *gin.Context) {
 
 	db := initialisers.ConnectToDB()
