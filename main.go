@@ -29,18 +29,33 @@ func main() {
 	router.SetTrustedProxies([]string{"109.81.95.132"})
 
 	// Books
-	router.GET("/books", controllers.GetBooks)
+	// seems to be okay
+	router.GET("/books", controllers.GetBooks) //✅
+
+	// both need slight changes
 	router.GET("/books/:id", controllers.GetBookByID)
 	router.GET("/books/author/:author", controllers.GetBooksByAuthor)
-	router.POST("/books", controllers.CreateBook)
+	// seems to be okay
+	router.POST("/books", controllers.CreateBook) // ✅
+
+	// Needs alteration
 	router.PUT("/books/:id", controllers.UpdateBook)
+
+	// Needs a lot of work
 	router.PUT("/books/read/:id", controllers.MarkRead)
+
+	// Easy Work
 	router.DELETE("/books/:id", controllers.DeleteBook)
 
 	// Auth
-	router.POST("/signup", controllers.SignUp)
-	router.POST("/login", controllers.Login)
-	router.GET("/validate", middleware.RequireAuth, controllers.Validate)
+	router.POST("/signup", controllers.SignUp)                            // ✅
+	router.POST("/login", controllers.Login)                              // ✅
+	router.GET("/validate", middleware.RequireAuth, controllers.Validate) // ✅
+
+	// Dashboard Routes:
+	// Fetch Percentage Read
+	// Fetch read of the past week, month and year
+	// Count most common authors
 
 	router.Run(":8000")
 }
