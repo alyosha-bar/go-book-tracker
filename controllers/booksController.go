@@ -2,23 +2,22 @@ package controllers
 
 import (
 	"books-backend/initialisers"
+	"books-backend/models"
 	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type Book struct {
 	Book_id int
 	Title   string `json:"title"`
 	Author  string `json:"author"`
-	Read    int    `json:read`
 }
 
-type Req struct {
-	read int `json:"value"`
-}
+// type Req struct {
+// 	read int `json:"value"`
+// }
 
 // GET functions
 
@@ -176,9 +175,14 @@ func UpdateBook(c *gin.Context) {
 func MarkRead(c *gin.Context) {
 
 	db := initialisers.ConnectToDB()
-	id := c.Param("id")
 
-	var body Req
+	type Body struct {
+		User_id int
+		Book_id int
+		Status  int
+	}
+
+	var body Body
 
 	if err := c.BindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -187,12 +191,23 @@ func MarkRead(c *gin.Context) {
 
 	fmt.Println("Inserting data...")
 
-	fmt.Printf("Value: %v", body.read)
+	fmt.Printf("Status: %v", body.Status)
+	fmt.Println("")
+	fmt.Printf("User_id: %v", body.User_id)
+	fmt.Println("")
+	fmt.Printf("Book_id: %v", body.Book_id)
 	fmt.Println("")
 
-	var updateBook Book
+	db.Debug()
+
 	// might need some figuring out how to optimise
-	result := db.Model(&updateBook).Where("id = ?", id).UpdateColumn("Read", gorm.Expr("?", body.read))
+	// result := db.Raw(`
+	// UPDATE user_books SET status = ? WHERE user_id = ? AND book_id = ?;`, body.Status, body.User_id, body.Book_id)
+
+	result := db.Model(&models.User_Book{}).Where("user_id = ?", body.User_id).Where("book_id = ?", body.Book_id).Update("status", body.Status)
+
+	// db.Model(&user).Where("active = ?", true).Update("name", "hello")
+
 	if result.Error != nil {
 		panic("Failed to insert data: " + result.Error.Error())
 	}

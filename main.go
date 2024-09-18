@@ -42,7 +42,7 @@ func main() {
 	router.PUT("/books/:id", controllers.UpdateBook)
 
 	// Needs a lot of work
-	router.PUT("/books/read/:id", controllers.MarkRead)
+	router.PUT("/books/read", controllers.MarkRead)
 
 	// Easy Work
 	router.DELETE("/books/:id", controllers.DeleteBook)
