@@ -65,8 +65,23 @@ func GetBookByID(c *gin.Context) {
 
 	id := c.Param("id")
 
+	var body struct {
+		User_id int
+	}
+
+	if err := c.BindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	var book Book
-	var result = db.First(&book, "id = ?", id)
+	result := db.Raw(`
+    SELECT books.title, books.author, user_books.status
+    FROM books
+    INNER JOIN user_books ON user_books.book_id = books.book_id
+    WHERE user_books.user_id = ? AND user_books.book_id = ?`, body.User_id, id).
+		First(&book) // Use Scan for multiple records
+
 	if result.Error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"message": "book not found :("})
 		panic("Failed to fetch book: " + result.Error.Error())
