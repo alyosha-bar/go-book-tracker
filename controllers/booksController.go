@@ -237,8 +237,24 @@ func MarkRead(c *gin.Context) {
 func DeleteBook(c *gin.Context) {
 	id := c.Param("id")
 
-	fmt.Print(id)
+	// delete from user_books
+	db := initialisers.ConnectToDB()
 
-	c.JSON(http.StatusNotFound, gin.H{"message": "book not found :("})
+	fmt.Println(id)
+
+	result := db.Where("book_id = ?", id).Delete(&models.User_Book{})
+	if result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{"message": "book not found :("})
+		panic("Failed to delete Data.")
+	}
+
+	// delete from books
+	result = db.Where("book_id = ?", id).Delete(&models.Book{})
+	if result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{"message": "book not found :("})
+		panic("Failed to delete Data.")
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "book deleted successfully."})
 
 }
