@@ -54,6 +54,7 @@ func main() {
 
 	// Dashboard Routes:
 	// Fetch Percentage Read
+	router.GET("/dash/percentage", controllers.PercentageRead)
 	// Fetch read of the past week, month and year
 	// Count most common authors
 
