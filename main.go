@@ -33,19 +33,17 @@ func main() {
 	router.GET("/books", controllers.GetBooks) //✅
 
 	// both need slight changes
-	router.GET("/books/:id", controllers.GetBookByID)
+	router.GET("/books/:id", controllers.GetBookByID) // ✅
 	router.GET("/books/author/:author", controllers.GetBooksByAuthor)
 	// seems to be okay
 	router.POST("/books", controllers.CreateBook) // ✅
 
 	// Needs alteration
 	router.PUT("/books/:id", controllers.UpdateBook)
-
-	// Needs a lot of work
-	router.PUT("/books/read", controllers.MarkRead)
+	router.PUT("/books/read", controllers.MarkRead) // ✅
 
 	// Easy Work
-	router.DELETE("/books/:id", controllers.DeleteBook)
+	router.DELETE("/books/:id", controllers.DeleteBook) // ✅
 
 	// Auth
 	router.POST("/signup", controllers.SignUp)                            // ✅
@@ -54,7 +52,7 @@ func main() {
 
 	// Dashboard Routes:
 	// Fetch Percentage Read
-	router.GET("/dash/percentage", controllers.PercentageRead)
+	router.GET("/dash/percentage", controllers.PercentageRead) // ✅
 	// Fetch read of the past week, month and year
 	// Count most common authors
 
