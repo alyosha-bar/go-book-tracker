@@ -46,9 +46,9 @@ func main() {
 	router.DELETE("/books/:id", controllers.DeleteBook) // ✅
 
 	// Auth
-	router.POST("/signup", controllers.SignUp)                            // ✅
-	router.POST("/login", controllers.Login)                              // ✅
-	router.GET("/validate", middleware.RequireAuth, controllers.Validate) // ✅
+	router.POST("/signup", controllers.SignUp)                                // ✅
+	router.POST("/api/login", controllers.Login)                              // ✅
+	router.GET("/api/validate", middleware.RequireAuth, controllers.Validate) // ✅
 
 	// Dashboard Routes:
 	// Fetch Percentage Read

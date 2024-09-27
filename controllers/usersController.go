@@ -52,6 +52,8 @@ func SignUp(c *gin.Context) {
 
 func Login(c *gin.Context) {
 
+	fmt.Println("Logging in on the server ... ")
+
 	var body struct {
 		Email    string
 		Password string
@@ -94,7 +96,7 @@ func Login(c *gin.Context) {
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET"))) // replace with ENV variable
 
-	fmt.Println(os.Getenv("SECRET"))
+	// fmt.Println(os.Getenv("SECRET"))
 
 	if err != nil {
 		fmt.Printf("Error: %v", err.Error())
