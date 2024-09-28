@@ -30,29 +30,29 @@ func main() {
 
 	// Books
 	// seems to be okay
-	router.GET("/books", controllers.GetBooks) //✅
+	router.GET("/api/books/:userid", controllers.GetBooks) //✅
 
 	// both need slight changes
-	router.GET("/books/:id", controllers.GetBookByID) // ✅
-	router.GET("/books/author/:author", controllers.GetBooksByAuthor)
+	router.GET("/api/books/id/:id", controllers.GetBookByID) // ✅
+	router.GET("/api/books/author/:author", controllers.GetBooksByAuthor)
 	// seems to be okay
-	router.POST("/books", controllers.CreateBook) // ✅
+	router.POST("/api/books", controllers.CreateBook) // ✅
 
 	// Needs alteration
-	router.PUT("/books/:id", controllers.UpdateBook)
-	router.PUT("/books/read", controllers.MarkRead) // ✅
+	router.PUT("/api/books/update/:id", controllers.UpdateBook)
+	router.PUT("/api/books/read", controllers.MarkRead) // ✅
 
 	// Easy Work
-	router.DELETE("/books/:id", controllers.DeleteBook) // ✅
+	router.DELETE("/api/books/:id", controllers.DeleteBook) // ✅
 
 	// Auth
-	router.POST("/signup", controllers.SignUp)                                // ✅
+	router.POST("/api/signup", controllers.SignUp)                            // ✅
 	router.POST("/api/login", controllers.Login)                              // ✅
 	router.GET("/api/validate", middleware.RequireAuth, controllers.Validate) // ✅
 
 	// Dashboard Routes:
 	// Fetch Percentage Read
-	router.GET("/dash/percentage", controllers.PercentageRead) // ✅
+	router.GET("/api/dash/percentage", controllers.PercentageRead) // ✅
 	// Fetch read of the past week, month and year
 	// Count most common authors
 

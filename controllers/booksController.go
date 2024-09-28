@@ -25,17 +25,14 @@ type Book struct {
 func GetBooks(c *gin.Context) {
 	db := initialisers.ConnectToDB()
 
-	var body struct {
-		User_id int
-	}
-
-	c.BindJSON(&body)
+	user_id := c.Param("userid")
 
 	// save into this array
 	type BookUserStatus struct {
-		Title  string `json:"title"`
-		Author string `json:"author"`
-		Status int    `json:"status"`
+		Book_id int    `json:"book_id"`
+		Title   string `json:"title"`
+		Author  string `json:"author"`
+		Status  int    `json:"status"`
 	}
 
 	var books []BookUserStatus
@@ -43,10 +40,10 @@ func GetBooks(c *gin.Context) {
 	// db = db.Debug()
 
 	result := db.Raw(`
-    SELECT books.title, books.author, user_books.status
+    SELECT books.book_id, books.title, books.author, user_books.status
     FROM books
     INNER JOIN user_books ON user_books.book_id = books.book_id
-    WHERE user_books.user_id = ?`, body.User_id).
+    WHERE user_books.user_id = ?`, user_id).
 		Find(&books) // Use Scan for multiple records
 
 	if result.Error != nil {
